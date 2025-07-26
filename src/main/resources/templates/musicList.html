@@ -284,11 +284,11 @@
             </td>
             <td class="actions">
               <!-- 播放按钮 -->
-              <a th:href="${music.filePath}"
-                 target="_blank"
-                 class="btn btn-sm btn-primary me-2">
+              <button class="btn btn-sm btn-primary me-2 play-btn"
+                      th:onclick="playMusic('${baseUrl + music.filePath}')"
+                      title="播放音乐">
                 <i class="bi bi-play-fill">🎧</i> 播放
-              </a>
+              </button>
 
               <!-- 复制按钮 -->
               <button class="btn btn-sm btn-outline-secondary copy-btn"
@@ -300,7 +300,8 @@
           </tbody>
         </table>
       </div>
-
+      <!-- 隐藏的音频播放器（动态设置 src） -->
+      <audio id="dynamicAudioPlayer" style="display: none;"></audio>
       <!-- 分页控件 -->
       <!-- 分页控件 - 已修复 -->
       <div th:if="${totalPages > 1}" class="pagination justify-content-center mt-4">
@@ -487,6 +488,47 @@
 
     // 清理
     document.body.removeChild(textarea);
+  }
+  // 播放音乐函数（关键修改）
+  function playMusic(fullUrl) {
+    if (!fullUrl) {
+      showToast('音乐文件路径不存在！');
+      return;
+    }
+
+    // 获取隐藏的音频元素
+    let audio = document.getElementById('dynamicAudioPlayer');
+    if (!audio) {
+      // 动态创建音频元素（兼容旧浏览器）
+      const newAudio = document.createElement('audio');
+      newAudio.id = 'dynamicAudioPlayer';
+      document.body.appendChild(newAudio);
+      audio = newAudio;
+    }
+
+    // 重置播放状态（避免重复播放）
+    audio.pause();
+    audio.currentTime = 0;
+    audio.src = fullUrl;  // 设置完整 URL
+
+    // 播放并处理错误
+    audio.play()
+            .then(() => {
+              showToast('播放成功！');
+            })
+            .catch(err => {
+              showToast(`播放失败：${err.message}`);
+              console.error('播放错误详情：', err);
+            });
+  }
+
+  // 暂停音乐函数（可选扩展）
+  function pauseMusic() {
+    const audio = document.getElementById('dynamicAudioPlayer');
+    if (audio) {
+      audio.pause();
+      showToast('已暂停播放');
+    }
   }
 </script>
 
