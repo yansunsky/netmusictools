@@ -1,10 +1,171 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音乐上传播放系统 - 登录</title>
+    <style>
+        /* 复用主系统样式变量 */
+        :root {
+            --primary: #4a69bd;
+            --primary-hover: #1e3799;
+            --accent: #e55039;
+            --light-bg: #f8f9fa;
+            --dark-text: #2c3e50;
+            --border: #e0e6ed;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7f1 100%); /* 主系统背景渐变 */
+            min-height: 100vh;
+            padding: 20px;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px; /* 与主系统卡片圆角一致 */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05); /* 与主系统卡片阴影一致 */
+            width: 100%;
+            max-width: 380px; /* 稍大于主系统卡片宽度 */
+        }
+
+        .login-title {
+            font-size: 24px; /* 与主系统标题字体大小一致 */
+            font-weight: 700; /* 与主系统标题字重一致 */
+            color: var(--dark-text); /* 与主系统标题颜色一致 */
+            text-align: center;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px; /* 与主系统标题图标间距一致 */
+        }
+
+        .login-title i {
+            color: var(--primary); /* 与主系统标题图标颜色一致 */
+            font-size: 28px; /* 与主系统标题图标大小一致 */
+        }
+
+        .form-group {
+            margin-bottom: 20px; /* 与主系统表单项间距一致 */
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px; /* 与主系统标签下边距一致 */
+            font-weight: 600; /* 与主系统标签字重一致 */
+            color: var(--dark-text); /* 与主系统标签颜色一致 */
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px; /* 与主系统输入框内边距一致 */
+            border: 1px solid var(--border); /* 与主系统输入框边框一致 */
+            border-radius: 8px; /* 与主系统输入框圆角一致 */
+            box-sizing: border-box;
+            font-size: 15px; /* 与主系统输入框字体大小一致 */
+            transition: all 0.3s ease; /* 与主系统输入框过渡效果一致 */
+        }
+
+        .form-input:focus {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* 与主系统输入框聚焦阴影一致 */
+            border-color: var(--primary); /* 与主系统输入框聚焦边框颜色一致 */
+            outline: none;
+        }
+
+        .login-btn {
+            background-color: var(--primary); /* 与主系统按钮背景色一致 */
+            color: white;
+            padding: 12px 24px; /* 与主系统按钮内边距一致 */
+            border: none;
+            border-radius: 8px; /* 与主系统按钮圆角一致 */
+            font-size: 16px; /* 与主系统按钮字体大小一致 */
+            font-weight: 500; /* 与主系统按钮字重一致 */
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease; /* 与主系统按钮过渡效果一致 */
+        }
+
+        .login-btn:hover {
+            background-color: var(--primary-hover); /* 与主系统按钮悬停背景色一致 */
+            box-shadow: 0 4px 10px rgba(74, 105, 189, 0.3); /* 与主系统按钮悬停阴影一致 */
+        }
+
+        .optional-note {
+            font-size: 12px;
+            color: #6c757d; /* 与主系统提示文字颜色一致 */
+            margin-top: 6px; /* 与主系统提示文字间距一致 */
+            text-align: right;
+        }
+
+        .list-link {
+            display: block;
+            text-align: center;
+            margin-top: 25px; /* 与主系统跳转按钮间距一致 */
+        }
+
+        .list-link .btn {
+            background-color: var(--primary); /* 与主系统跳转按钮背景色一致 */
+            color: white;
+            padding: 10px 15px; /* 与主系统跳转按钮内边距一致 */
+            border: none;
+            border-radius: 6px; /* 与主系统跳转按钮圆角一致 */
+            font-size: 15px; /* 与主系统跳转按钮字体大小一致 */
+            font-weight: 500; /* 与主系统跳转按钮字重一致 */
+            cursor: pointer;
+            transition: all 0.3s ease; /* 与主系统跳转按钮过渡效果一致 */
+            display: inline-flex;
+            align-items: center;
+            gap: 8px; /* 与主系统跳转按钮图标间距一致 */
+        }
+
+        .list-link .btn:hover {
+            background-color: var(--primary-hover); /* 与主系统跳转按钮悬停背景色一致 */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* 与主系统跳转按钮悬停阴影一致 */
+        }
+    </style>
 </head>
 <body>
+<div class="login-container">
+    <!-- 登录标题（带图标） -->
+    <h1 class="login-title">
+        <i>🎵</i>
+        <span>音乐上传播放系统</span>
+    </h1>
 
+    <!-- 登录表单 -->
+    <form action="/doLogin" method="post">
+        <div class="form-group">
+            <label for="userName" class="form-label">玩家名:</label>
+            <input type="text" id="userName" name="userName" class="form-input" required>
+        </div>
+
+        <div class="form-group">
+            <label for="qqNumber" class="form-label">QQ号:</label>
+            <input type="text" id="qqNumber" name="qqNumber" class="form-input"
+                   pattern="[0-9]{5,13}" title="QQ号需为5-13位数字">
+            <div class="optional-note">选填</div>
+        </div>
+
+        <!-- 登录按钮 -->
+        <button type="submit" class="login-btn">
+            <i>🔒</i>
+            <span>免注册登录</span>
+        </button>
+    </form>
+
+    <!-- 跳转音乐列表按钮 -->
+    <div class="list-link">
+        <a href="/api/music/musicList" class="btn">
+            <i>📋</i>
+            <span>查看音乐列表</span>
+        </a>
+    </div>
+</div>
 </body>
 </html>
